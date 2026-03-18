@@ -1,0 +1,5 @@
+{
+  "headless": true,
+  "retry_limit": 3,
+  "discord_webhook_url": "https://discord.com/api/webhooks/1478403671405498510/OdwLNnrEn-HnOUDB-ND4hMpYHO1702cp-xCqCFktRhdzUNrGFLR-9puhe7MCpTyDslI-"
+}

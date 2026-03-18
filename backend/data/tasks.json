@@ -1,0 +1,80 @@
+{
+  "f321eca1": {
+    "id": "f321eca1",
+    "product_url": "https://www.target.co.jp/view/item/000000020649",
+    "quantity": 2,
+    "customer": {
+      "name": "ファム　フォック",
+      "name_kana": "Taro Niki",
+      "email": "nhokbaker321@gmail.com",
+      "phone": "07091870603",
+      "zip_code": "577-0818",
+      "prefecture_id": "17",
+      "address1": "センチュリーシティー2 202号",
+      "address2": "センチュリーシティー2 202号"
+    },
+    "credit_card": {
+      "number": "4019 2401 2138 0102",
+      "expire": "03/28",
+      "security": "134",
+      "holder_name": "VANDLE USER"
+    },
+    "proxy_id": null,
+    "reload_delay_ms": 1000,
+    "status": "success",
+    "last_log": "✅ Checkout completed successfully!",
+    "task_name": "4670"
+  },
+  "d4ac8ebc": {
+    "id": "d4ac8ebc",
+    "product_url": "https://www.target.co.jp/view/item/000000020844",
+    "quantity": 1,
+    "customer": {
+      "name": "ファム　フォック",
+      "name_kana": "Taro Niki",
+      "email": "nhokbaker321@gmail.com",
+      "phone": "07091870603",
+      "zip_code": "577-0818",
+      "prefecture_id": "27",
+      "address1": "東大阪市小若江1-6-8",
+      "address2": "センチュリーシティー2 202号"
+    },
+    "credit_card": {
+      "number": "4019 2401 2138 0102",
+      "expire": "03/28",
+      "security": "134",
+      "holder_name": "VANDLE USER"
+    },
+    "proxy_id": "81520435",
+    "reload_delay_ms": 1000,
+    "status": "success",
+    "last_log": "✅ Checkout completed successfully!",
+    "task_name": "18150"
+  },
+  "a63152c5": {
+    "id": "a63152c5",
+    "product_url": "https://www.target.co.jp/smartphone/detail.html?id=000000020948",
+    "quantity": 1,
+    "customer": {
+      "name": "ファム　フォック",
+      "name_kana": "haha",
+      "email": "nhokbaker321@gmail.com",
+      "phone": "7091870603",
+      "zip_code": "577-0818",
+      "prefecture_id": "",
+      "address1": "センチュリーシティー2 202号",
+      "address2": "センチュリーシティー2 202号"
+    },
+    "credit_card": {
+      "number": "4019 2401 2138 0102",
+      "expire": "03/28",
+      "security": "134",
+      "holder_name": "VANDLE USER"
+    },
+    "proxy_id": "81520435",
+    "reload_delay_ms": 3000,
+    "status": "running",
+    "last_log": "⏳ Sold out. Reloading in 3000ms...",
+    "task_name": "Sold out"
+  }
+}
