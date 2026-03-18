@@ -1,14 +1,11 @@
 import { useState } from "react";
-import type { TaskConfig, ProxyEntry, ProfileInfo, CustomerInfo, CreditCardInfo } from "../types";
-import { createTask, updateTask } from "../api";
-import { X } from "lucide-react";
+import type { ProfileInfo, CustomerInfo, CreditCardInfo } from "../types";
+import { createProfile, updateProfile, deleteProfile } from "../api";
+import { Plus, Pencil, Trash2, X, User } from "lucide-react";
 
 interface Props {
-  task: TaskConfig | null;  // null = create new
-  proxies: ProxyEntry[];
   profiles: ProfileInfo[];
-  onClose: () => void;
-  onSaved: () => void;
+  onRefresh: () => void;
 }
 
 const PREFECTURES = [
@@ -31,54 +28,52 @@ const PREFECTURES = [
   { id: "46", label: "鹿児島県" }, { id: "47", label: "沖縄県" },
 ];
 
-export default function TaskModal({ task, proxies, profiles, onClose, onSaved }: Props) {
-  const isEdit = !!task;
+function ProfileModal({
+  profile,
+  onClose,
+  onSaved,
+}: {
+  profile: ProfileInfo | null; // null = create new
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const isEdit = !!profile;
 
-  const [taskName, setTaskName] = useState(task?.task_name || "");
-  const [productUrl, setProductUrl] = useState(task?.product_url || "");
-  const [quantity, setQuantity] = useState(task?.quantity || 1);
-  const [reloadDelay, setReloadDelay] = useState(task?.reload_delay_ms || 3000);
-  const [proxyId, setProxyId] = useState<string | null>(task?.proxy_id || null);
-  const [profileId, setProfileId] = useState<string | null>(task?.profile_id || null);
-
+  const [profileName, setProfileName] = useState(profile?.profile_name || "");
   const [customer, setCustomer] = useState<CustomerInfo>(
-    task?.customer || {
+    profile?.customer || {
       name: "", name_kana: "", email: "", phone: "",
       zip_code: "", prefecture_id: "", address1: "", address2: "",
     }
   );
-
   const [card, setCard] = useState<CreditCardInfo>(
-    task?.credit_card || {
+    profile?.credit_card || {
       number: "", expire: "", security: "", holder_name: "",
     }
   );
-
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
+    if (!profileName.trim()) {
+      alert("Profile name is required");
+      return;
+    }
     setSaving(true);
     try {
       const payload = {
-        task_name: taskName,
-        product_url: productUrl,
-        quantity,
+        profile_name: profileName,
         customer,
         credit_card: card,
-        proxy_id: proxyId,
-        profile_id: profileId,
-        reload_delay_ms: reloadDelay,
       };
-
-      if (isEdit && task) {
-        await updateTask(task.id, payload);
+      if (isEdit && profile) {
+        await updateProfile(profile.id, payload);
       } else {
-        await createTask(payload);
+        await createProfile(payload);
       }
       onSaved();
       onClose();
     } catch (err) {
-      alert("Error saving task: " + (err instanceof Error ? err.message : err));
+      alert("Error saving profile: " + (err instanceof Error ? err.message : err));
     } finally {
       setSaving(false);
     }
@@ -92,79 +87,29 @@ export default function TaskModal({ task, proxies, profiles, onClose, onSaved }:
     setCard((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleProfileChange = (selectedProfileId: string) => {
-    if (!selectedProfileId) {
-      setProfileId(null);
-      return;
-    }
-    setProfileId(selectedProfileId);
-    const selectedProfile = profiles.find((p) => p.id === selectedProfileId);
-    if (selectedProfile) {
-      setCustomer({ ...selectedProfile.customer });
-      setCard({ ...selectedProfile.credit_card });
-    }
-  };
-
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-          <h2>{isEdit ? "Edit Task" : "New Task"}</h2>
+          <h2>{isEdit ? "Edit Profile" : "New Profile"}</h2>
           <button className="btn-icon" onClick={onClose}><X size={18} /></button>
         </div>
 
         <div className="modal-body">
-          {/* Basic Info */}
+          {/* Profile Name */}
           <div className="form-section">
-            <h3>Basic Info</h3>
+            <h3>Profile</h3>
             <div className="form-grid">
               <div className="form-group">
-                <label>Task Name</label>
-                <input value={taskName} onChange={(e) => setTaskName(e.target.value)} placeholder="My Task" />
-              </div>
-              <div className="form-group">
-                <label>Product URL</label>
-                <input value={productUrl} onChange={(e) => setProductUrl(e.target.value)} placeholder="https://www.target.co.jp/view/item/..." />
-              </div>
-              <div className="form-group">
-                <label>Quantity</label>
-                <input type="number" min={1} value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
-              </div>
-              <div className="form-group">
-                <label>Reload Delay (ms)</label>
-                <input type="number" min={500} step={500} value={reloadDelay} onChange={(e) => setReloadDelay(Number(e.target.value))} />
-              </div>
-              <div className="form-group">
-                <label>Proxy</label>
-                <select value={proxyId || ""} onChange={(e) => setProxyId(e.target.value || null)}>
-                  <option value="">No Proxy</option>
-                  {proxies.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.host}:{p.port} ({p.status})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Profile</label>
-                <select value={profileId || ""} onChange={(e) => handleProfileChange(e.target.value)}>
-                  <option value="">No Profile (Manual Input)</option>
-                  {profiles.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.profile_name}
-                    </option>
-                  ))}
-                </select>
-                {profiles.length === 0 && (
-                  <small>No profiles yet. Create one in the Profiles tab.</small>
-                )}
+                <label>Profile Name</label>
+                <input value={profileName} onChange={(e) => setProfileName(e.target.value)} placeholder="e.g. Personal, Work, Family..." />
               </div>
             </div>
           </div>
 
           {/* Customer Info */}
           <div className="form-section">
-            <h3>Customer Info (Guest Checkout)</h3>
+            <h3>Customer Info</h3>
             <div className="form-grid">
               <div className="form-group">
                 <label>Full Name</label>
@@ -232,10 +177,100 @@ export default function TaskModal({ task, proxies, profiles, onClose, onSaved }:
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
           <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : isEdit ? "Update Task" : "Create Task"}
+            {saving ? "Saving..." : isEdit ? "Update Profile" : "Create Profile"}
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+export default function ProfileManager({ profiles, onRefresh }: Props) {
+  const [modalProfile, setModalProfile] = useState<ProfileInfo | null | undefined>(undefined);
+  // undefined = closed, null = new, ProfileInfo = edit
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this profile?")) return;
+    try {
+      await deleteProfile(id);
+      onRefresh();
+    } catch (err) {
+      alert("Error: " + (err instanceof Error ? err.message : err));
+    }
+  };
+
+  const getPrefectureName = (id: string) => {
+    const p = PREFECTURES.find((p) => p.id === id);
+    return p ? p.label : "";
+  };
+
+  const maskCard = (num: string) => {
+    if (!num || num.length < 4) return num;
+    return "****" + num.slice(-4);
+  };
+
+  return (
+    <div className="proxy-manager">
+      <div className="toolbar">
+        <button className="btn btn-primary" onClick={() => setModalProfile(null)}>
+          <Plus size={14} /> New Profile
+        </button>
+      </div>
+
+      {profiles.length === 0 ? (
+        <div className="empty-state">
+          <User size={32} />
+          <p style={{ marginTop: 12 }}>No profiles yet. Create one to quickly fill in task info.</p>
+        </div>
+      ) : (
+        <div className="table-container" style={{ maxHeight: "none" }}>
+          <table>
+            <thead>
+              <tr>
+                <th>Profile Name</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Prefecture</th>
+                <th>Card</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {profiles.map((p) => (
+                <tr key={p.id}>
+                  <td className="td-name">{p.profile_name || "—"}</td>
+                  <td>{p.customer.name || "—"}</td>
+                  <td>{p.customer.email || "—"}</td>
+                  <td>{p.customer.phone || "—"}</td>
+                  <td>{getPrefectureName(p.customer.prefecture_id) || "—"}</td>
+                  <td style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}>
+                    {maskCard(p.credit_card.number) || "—"}
+                  </td>
+                  <td>
+                    <div className="td-actions">
+                      <button className="btn-icon btn-blue" onClick={() => setModalProfile(p)} title="Edit">
+                        <Pencil size={14} />
+                      </button>
+                      <button className="btn-icon btn-red" onClick={() => handleDelete(p.id)} title="Delete">
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {modalProfile !== undefined && (
+        <ProfileModal
+          profile={modalProfile}
+          onClose={() => setModalProfile(undefined)}
+          onSaved={onRefresh}
+        />
+      )}
     </div>
   );
 }

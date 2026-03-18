@@ -1,23 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
-import type { TaskConfig, ProxyEntry } from "./types";
-import { getTasks, getProxies, startAllTasks, stopAllTasks } from "./api";
+import type { TaskConfig, ProxyEntry, ProfileInfo } from "./types";
+import { getTasks, getProxies, getProfiles, startAllTasks, stopAllTasks } from "./api";
 import { useWebSocket } from "./hooks/useWebSocket";
 import TaskTable from "./components/TaskTable";
 import TaskModal from "./components/TaskModal";
 import LogViewer from "./components/LogViewer";
 import ProxyManager from "./components/ProxyManager";
+import ProfileManager from "./components/ProfileManager";
 import SettingsPanel from "./components/SettingsPanel";
 import {
   Plus, PlayCircle, StopCircle, Wifi, WifiOff,
-  ListTodo, Globe, Settings, Terminal,
+  ListTodo, Globe, Settings, Terminal, User,
 } from "lucide-react";
 import "./App.css";
 
-type Tab = "tasks" | "proxies" | "settings";
+type Tab = "tasks" | "proxies" | "profiles" | "settings";
 
 export default function App() {
   const [tasks, setTasks] = useState<TaskConfig[]>([]);
   const [proxies, setProxies] = useState<ProxyEntry[]>([]);
+  const [profiles, setProfiles] = useState<ProfileInfo[]>([]);
   const [tab, setTab] = useState<Tab>("tasks");
   const [modalTask, setModalTask] = useState<TaskConfig | null | undefined>(undefined);
   // undefined = closed, null = new task, TaskConfig = edit
@@ -41,6 +43,15 @@ export default function App() {
     }
   }, []);
 
+  const fetchProfiles = useCallback(async () => {
+    try {
+      const data = await getProfiles();
+      setProfiles(data as unknown as ProfileInfo[]);
+    } catch {
+      // API might be down
+    }
+  }, []);
+
   const handleTaskUpdate = useCallback((taskData: Record<string, unknown>) => {
     const updated = taskData as unknown as TaskConfig;
     setTasks((prev) => {
@@ -59,7 +70,8 @@ export default function App() {
   useEffect(() => {
     fetchTasks();
     fetchProxies();
-  }, [fetchTasks, fetchProxies]);
+    fetchProfiles();
+  }, [fetchTasks, fetchProxies, fetchProfiles]);
 
   const handleStartAll = async () => {
     try {
@@ -114,6 +126,12 @@ export default function App() {
           <Globe size={16} /> Proxies ({proxies.length})
         </button>
         <button
+          className={`tab ${tab === "profiles" ? "active" : ""}`}
+          onClick={() => setTab("profiles")}
+        >
+          <User size={16} /> Profiles ({profiles.length})
+        </button>
+        <button
           className={`tab ${tab === "settings" ? "active" : ""}`}
           onClick={() => setTab("settings")}
         >
@@ -150,6 +168,10 @@ export default function App() {
           <ProxyManager proxies={proxies} onRefresh={fetchProxies} />
         )}
 
+        {tab === "profiles" && (
+          <ProfileManager profiles={profiles} onRefresh={fetchProfiles} />
+        )}
+
         {tab === "settings" && <SettingsPanel />}
       </main>
 
@@ -174,6 +196,7 @@ export default function App() {
         <TaskModal
           task={modalTask}
           proxies={proxies}
+          profiles={profiles}
           onClose={() => setModalTask(undefined)}
           onSaved={fetchTasks}
         />

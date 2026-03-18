@@ -24,9 +24,17 @@ export interface TaskConfig {
   customer: CustomerInfo;
   credit_card: CreditCardInfo;
   proxy_id: string | null;
+  profile_id: string | null;
   reload_delay_ms: number;
   status: "idle" | "running" | "paused" | "success" | "error";
   last_log: string;
+}
+
+export interface ProfileInfo {
+  id: string;
+  profile_name: string;
+  customer: CustomerInfo;
+  credit_card: CreditCardInfo;
 }
 
 export interface ProxyEntry {

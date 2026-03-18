@@ -37,6 +37,7 @@ from config import (
     GlobalSettings,
     ProxyEntry,
     TaskConfig,
+    ProfileInfo,
     CustomerInfo,
     CreditCardInfo,
     load_json,
@@ -45,6 +46,7 @@ from config import (
     CONFIG_FILE,
     TASKS_FILE,
     PROXIES_FILE,
+    PROFILES_FILE,
 )
 from worker import AutoWorker
 from discord_hook import send_discord_webhook
@@ -55,6 +57,7 @@ from discord_hook import send_discord_webhook
 settings = GlobalSettings()
 tasks: Dict[str, TaskConfig] = {}
 proxies: Dict[str, ProxyEntry] = {}
+profiles: Dict[str, ProfileInfo] = {}
 workers: Dict[str, AutoWorker] = {}
 async_tasks: Dict[str, asyncio.Task] = {}  # asyncio.Task handles for cancellation
 ws_connections: list[WebSocket] = []
@@ -72,6 +75,10 @@ def persist_tasks():
 
 def persist_proxies():
     save_json(PROXIES_FILE, {pid: p.model_dump() for pid, p in proxies.items()})
+
+
+def persist_profiles():
+    save_json(PROFILES_FILE, {pid: p.model_dump() for pid, p in profiles.items()})
 
 
 def load_state():
@@ -92,6 +99,10 @@ def load_state():
     raw_proxies = load_json(PROXIES_FILE, {})
     for pid, pdata in raw_proxies.items():
         proxies[pid] = ProxyEntry(**pdata)
+
+    raw_profiles = load_json(PROFILES_FILE, {})
+    for pid, pdata in raw_profiles.items():
+        profiles[pid] = ProfileInfo(**pdata)
 
 
 # ── WebSocket broadcast ────────────────────────────────────────────
@@ -254,6 +265,7 @@ class TaskCreateRequest(BaseModel):
     customer: CustomerInfo = CustomerInfo()
     credit_card: CreditCardInfo = CreditCardInfo()
     proxy_id: Optional[str] = None
+    profile_id: Optional[str] = None
     reload_delay_ms: int = 3000
 
 
@@ -273,6 +285,7 @@ async def create_task(body: TaskCreateRequest):
         customer=body.customer,
         credit_card=body.credit_card,
         proxy_id=body.proxy_id,
+        profile_id=body.profile_id,
         reload_delay_ms=body.reload_delay_ms,
     )
     tasks[tid] = task
@@ -293,6 +306,7 @@ async def update_task(task_id: str, body: TaskCreateRequest):
     task.customer = body.customer
     task.credit_card = body.credit_card
     task.proxy_id = body.proxy_id
+    task.profile_id = body.profile_id
     task.reload_delay_ms = body.reload_delay_ms
     persist_tasks()
     return task.model_dump()
@@ -497,6 +511,56 @@ async def test_all_proxies():
 
     await asyncio.gather(*[_test(pid) for pid in proxies])
     return [p.model_dump() for p in proxies.values()]
+
+
+# ══════════════════════════════════════════════════════════════════════
+#  PROFILES
+# ══════════════════════════════════════════════════════════════════════
+
+class ProfileCreateRequest(BaseModel):
+    profile_name: str = ""
+    customer: CustomerInfo = CustomerInfo()
+    credit_card: CreditCardInfo = CreditCardInfo()
+
+
+@app.get("/api/profiles")
+async def list_profiles():
+    return [p.model_dump() for p in profiles.values()]
+
+
+@app.post("/api/profiles")
+async def create_profile(body: ProfileCreateRequest):
+    pid = str(uuid.uuid4())[:8]
+    profile = ProfileInfo(
+        id=pid,
+        profile_name=body.profile_name,
+        customer=body.customer,
+        credit_card=body.credit_card,
+    )
+    profiles[pid] = profile
+    persist_profiles()
+    return profile.model_dump()
+
+
+@app.put("/api/profiles/{profile_id}")
+async def update_profile(profile_id: str, body: ProfileCreateRequest):
+    if profile_id not in profiles:
+        raise HTTPException(404, "Profile not found")
+    profile = profiles[profile_id]
+    profile.profile_name = body.profile_name
+    profile.customer = body.customer
+    profile.credit_card = body.credit_card
+    persist_profiles()
+    return profile.model_dump()
+
+
+@app.delete("/api/profiles/{profile_id}")
+async def delete_profile(profile_id: str):
+    if profile_id not in profiles:
+        raise HTTPException(404, "Profile not found")
+    profiles.pop(profile_id)
+    persist_profiles()
+    return {"ok": True}
 
 
 # ══════════════════════════════════════════════════════════════════════

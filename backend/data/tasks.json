@@ -20,6 +20,7 @@
       "holder_name": "VANDLE USER"
     },
     "proxy_id": null,
+    "profile_id": null,
     "reload_delay_ms": 1000,
     "status": "success",
     "last_log": "✅ Checkout completed successfully!",
@@ -46,9 +47,10 @@
       "holder_name": "VANDLE USER"
     },
     "proxy_id": "81520435",
+    "profile_id": null,
     "reload_delay_ms": 1000,
-    "status": "success",
-    "last_log": "✅ Checkout completed successfully!",
+    "status": "idle",
+    "last_log": "Task cancelled by user.",
     "task_name": "18150"
   },
   "a63152c5": {
@@ -72,9 +74,37 @@
       "holder_name": "VANDLE USER"
     },
     "proxy_id": "81520435",
+    "profile_id": null,
     "reload_delay_ms": 3000,
-    "status": "running",
-    "last_log": "⏳ Sold out. Reloading in 3000ms...",
+    "status": "idle",
+    "last_log": "Task cancelled by user.",
     "task_name": "Sold out"
+  },
+  "0fdd4147": {
+    "id": "0fdd4147",
+    "product_url": "https://www.target.co.jp/view/item/000000020649",
+    "quantity": 1,
+    "customer": {
+      "name": "김민준",
+      "name_kana": "キム ミンジュン",
+      "email": "minjun.kim@naver.com",
+      "phone": "010-9876-5432",
+      "zip_code": "06234",
+      "prefecture_id": "11",
+      "address1": "서울특별시 강남구 테헤란로",
+      "address2": "123-45 7층 701호"
+    },
+    "credit_card": {
+      "number": "5412751234123456",
+      "expire": "11/27",
+      "security": "829",
+      "holder_name": "KIM MIN JUN"
+    },
+    "proxy_id": null,
+    "profile_id": "61a27114",
+    "reload_delay_ms": 3000,
+    "status": "error",
+    "last_log": "Max retries exceeded. Stopping.",
+    "task_name": "Test"
   }
 }

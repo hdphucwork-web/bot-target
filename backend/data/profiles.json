@@ -1,0 +1,42 @@
+{
+  "61a27114": {
+    "id": "61a27114",
+    "profile_name": "개인 쇼핑용",
+    "customer": {
+      "name": "김민준",
+      "name_kana": "キム ミンジュン",
+      "email": "minjun.kim@naver.com",
+      "phone": "010-9876-5432",
+      "zip_code": "06234",
+      "prefecture_id": "",
+      "address1": "서울특별시 강남구 테헤란로",
+      "address2": "123-45 7층 701호"
+    },
+    "credit_card": {
+      "number": "5412751234123456",
+      "expire": "11/27",
+      "security": "829",
+      "holder_name": "KIM MIN JUN"
+    }
+  },
+  "0d20fd77": {
+    "id": "0d20fd77",
+    "profile_name": "개인용_프로필_01",
+    "customer": {
+      "name": "김지수",
+      "name_kana": "김지수",
+      "email": "jisoo.kim92@gmail.com",
+      "phone": "010-4829-1057",
+      "zip_code": "06164",
+      "prefecture_id": "",
+      "address1": "서울특별시 강남구",
+      "address2": "테헤란로 521"
+    },
+    "credit_card": {
+      "number": "4532123456789012",
+      "expire": "11/27",
+      "security": "842",
+      "holder_name": "KIM JI SOO"
+    }
+  }
+}

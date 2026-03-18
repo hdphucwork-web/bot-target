@@ -8,6 +8,7 @@ import os
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "data", "config.json")
 TASKS_FILE = os.path.join(os.path.dirname(__file__), "data", "tasks.json")
 PROXIES_FILE = os.path.join(os.path.dirname(__file__), "data", "proxies.json")
+PROFILES_FILE = os.path.join(os.path.dirname(__file__), "data", "profiles.json")
 
 
 class GlobalSettings(BaseModel):
@@ -58,10 +59,18 @@ class TaskConfig(BaseModel):
     customer: CustomerInfo = Field(default_factory=CustomerInfo)
     credit_card: CreditCardInfo = Field(default_factory=CreditCardInfo)
     proxy_id: Optional[str] = None
+    profile_id: Optional[str] = None
     reload_delay_ms: int = 3000
     status: str = "idle"  # idle | running | paused | success | error
     last_log: str = ""
     task_name: str = ""
+
+
+class ProfileInfo(BaseModel):
+    id: str
+    profile_name: str = ""
+    customer: CustomerInfo = Field(default_factory=CustomerInfo)
+    credit_card: CreditCardInfo = Field(default_factory=CreditCardInfo)
 
 
 def ensure_data_dir():

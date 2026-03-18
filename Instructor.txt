@@ -2,30 +2,29 @@
 
 - Thêm 2 terminal: 1 BE và 1 FE
 
-BE: 
-cd backend
-pip install -r requirements.txt hoặc python -m pip install -r requirements.txt
-playwright install chromium
-python run.py
+--------------------Backend--------------------
+Bước 1: cd backend
+Bước 2:pip install -r requirements.txt hoặc python -m pip install -r requirements.txt
+Bước 3: playwright install chromium
+Bước 4: python run.py
 
 Link tải trực tiếp python https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe
 
 3 bước lưu ý khi cài đặt:
 
 - Gỡ bản cũ: Hãy nhớ gỡ cài đặt hoàn toàn bản Python 3.14 hiện tại (nếu có) trên máy Windows của bạn để tránh xung đột phiên bản.
-
 - Tick chọn PATH: Khi mở file cài đặt 3.12.10 lên, bước quan trọng nhất là phải tick chọn ô "Add python.exe to PATH" ở ngay dưới cùng cửa sổ đầu tiên, sau đó mới nhấn Install Now.
-
 - Khởi động lại: Tắt và mở lại hoàn toàn VS Code để terminal nhận diện được đường dẫn Python mới.
 
-FE: 
-cd frontend
-npm install
-npm run dev
+--------------------Frontend--------------------
+Bước 1: cd frontend
+Bước 2: npm install (kiểm tra nếu trong Frontend nếu đã có folder node_modules thì bỏ qua bước này)
+Bước 3: npm run dev
 
 Note: vào đây setting fill chrome://settings/addresses (image.png)
 
-
+--------------------Câu lệnh--------------------
 Cập nhật code mới nhất: git pull origin 
 Clone code từ terminal: git clone
+Mở vscode nhanh: vào folder => cmd => code .
 

@@ -54,4 +54,13 @@ export const testProxy = (id: string) =>
 export const testAllProxies = () =>
   request("/api/proxies/test-all", { method: "POST" });
 
+// ── Profiles ──
+export const getProfiles = () => request<Record<string, unknown>[]>("/api/profiles");
+export const createProfile = (data: Record<string, unknown>) =>
+  request("/api/profiles", { method: "POST", body: JSON.stringify(data) });
+export const updateProfile = (id: string, data: Record<string, unknown>) =>
+  request(`/api/profiles/${id}`, { method: "PUT", body: JSON.stringify(data) });
+export const deleteProfile = (id: string) =>
+  request(`/api/profiles/${id}`, { method: "DELETE" });
+
 export const WS_URL = "ws://localhost:8000/ws";
